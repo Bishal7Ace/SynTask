@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SynTask{% endblock %}</title>
+    {% load static tailwind_tags %}
+    {% tailwind_css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{% static 'js/main.js' %}" defer></script>
+    
+    <style>
+        /* Custom styles for layout fixes */
+        #sidebar {
+            top: 4rem; /* 64px - matches navbar height */
+            height: calc(100vh - 4rem);
+        }
+        
+        /* Adjust main content area */
+        main {
+            min-height: calc(100vh - 4rem);
+            padding-top: 1rem;
+        }
+        
+        /* Improved mobile view - sidebar hidden by default on mobile */
+        @media (max-width: 1023px) {
+            #sidebar {
+                transform: translateX(-100%);
+            }
+            
+            #sidebar.mobile-visible {
+                transform: translateX(0);
+            }
+            
+            main {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Flash messages -->
+    {% if messages %}
+        <div id="flash-messages" class="fixed top-4 right-4 z-50 space-y-2">
+            {% for message in messages %}
+                <div class="px-4 py-2 rounded shadow-lg {% if message.tags == 'success' %}bg-green-500{% elif message.tags == 'error' %}bg-red-500{% else %}bg-blue-500{% endif %} text-white">
+                    {{ message }}
+                    <button class="ml-2 text-white hover:text-gray-200" onclick="this.parentElement.remove();">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+        <script>
+            // Auto-hide messages after 5 seconds
+            setTimeout(function() {
+                const messages = document.getElementById('flash-messages');
+                if (messages) {
+                    messages.querySelectorAll('div').forEach(msg => {
+                        msg.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+                        setTimeout(() => { msg.remove(); }, 500);
+                    });
+                }
+            }, 5000);
+        </script>
+    {% endif %}
+    
+    {% if user.is_authenticated %}
+        <!-- Include navbar -->
+        {% include 'partials/navbar.html' %}
+        
+        <!-- Main layout with sidebar -->
+        <div class="flex min-h-screen">
+            {% include 'partials/sidebar.html' %}
+            
+            <!-- Main content area - properly adjusted for sidebar -->
+            <main class="flex-1 lg:ml-64 p-4 md:p-8 w-full transition-all duration-200 ease-in-out">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    {% else %}
+        <!-- Content for non-authenticated users -->
+        <div class="min-h-screen">
+            {% block auth_content %}{% endblock %}
+        </div>
+    {% endif %}
+    
+    <!-- Optional: Add scripts block for page-specific scripts -->
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

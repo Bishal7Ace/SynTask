@@ -1,0 +1,80 @@
+{% load static %}
+<nav class="bg-white shadow-sm sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+            <!-- Left side (logo and mobile menu button) -->
+            <div class="flex items-center">
+                <!-- Mobile menu button (hamburger) -->
+                <button id="sidebarToggleBtn" class="mr-2 text-gray-500 hover:text-gray-900 focus:outline-none lg:hidden" aria-label="Toggle sidebar">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+                                
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center">
+                    <img class="h-12 w-auto" src="{% static 'images/logo.svg' %}" alt="SynTask">
+                    <span class="ml-2 text-xl font-semibold text-gray-900 hidden sm:inline">SynTask</span>
+                </div>
+            </div>
+
+            <!-- Right side (user menu) -->
+            <div class="flex items-center">
+                <div class="ml-4 flex items-center md:ml-6">
+                    <div class="ml-3 relative">
+                        <div>
+                            <button type="button" 
+                                    class="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" 
+                                    id="user-menu-btn" 
+                                    aria-expanded="false" 
+                                    aria-haspopup="true">
+                                <span class="sr-only">Open user menu</span>
+                                {% if user.profile.avatar %}
+                                    <img class="h-8 w-8 rounded-full" src="{{ user.profile.avatar.url }}" alt="User avatar">
+                                {% else %}
+                                    <div class="h-8 w-8 rounded-full bg-indigo-500 flex items-center justify-center text-white font-semibold">
+                                        {% if user.first_name and user.last_name %}
+                                            {{ user.first_name|first }}{{ user.last_name|first }}
+                                        {% else %}
+                                            {{ user.username|first|upper }}
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                                <span class="ml-2 hidden md:inline">
+                                    {% if user.get_full_name %}
+                                        {{ user.get_full_name }}
+                                    {% else %}
+                                        {{ user.username }}
+                                    {% endif %}
+                                </span>
+                                <svg class="ml-1 h-4 w-4 text-gray-400 hidden md:inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <!-- User Menu Dropdown -->
+                        <div id="user-menu" 
+                             class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none hidden" 
+                             role="menu" 
+                             aria-orientation="vertical" 
+                             aria-labelledby="user-menu-btn">
+                            <a href="{% url 'profile_settings' %}" 
+                               class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" 
+                               role="menuitem">Your Profile</a>
+                            <a href="{% url 'security_settings' %}" 
+                               class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" 
+                               role="menuitem">Security</a>
+                            <form method="post" action="{% url 'logout' %}">
+                                {% csrf_token %}
+                                <button type="submit" 
+                                        class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" 
+                                        role="menuitem">Sign out</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>

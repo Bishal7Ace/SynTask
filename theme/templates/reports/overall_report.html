@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Overall Report{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <div class="mb-8">
+        <div class="flex justify-between items-start">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Overall Task Report</h1>
+                <p class="mt-1 text-sm text-gray-500">A comprehensive overview of all your projects and tasks.</p>
+            </div>
+            <div class="flex space-x-2">
+                <a href="{% url 'export_overall_pdf' %}" class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <i class="fas fa-file-pdf mr-1"></i> PDF
+                </a>
+                <a href="{% url 'export_overall_csv' %}" class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <i class="fas fa-file-csv mr-1"></i> CSV
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <!-- Projects Summary -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <h2 class="text-lg font-medium text-gray-900 mb-4">Projects Summary</h2>
+            <canvas id="projectsChart" class="w-full h-48"></canvas>
+            <div class="mt-4 grid grid-cols-2 gap-4">
+                <div class="text-center">
+                    <p class="text-sm font-medium text-gray-500">Total Projects</p>
+                    <p class="text-xl font-semibold text-indigo-600">{{ projects.count }}</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-sm font-medium text-gray-500">Completed Projects</p>
+                    <p class="text-xl font-semibold text-green-500">{{ completed_projects }}</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-sm font-medium text-gray-500">Active Projects</p>
+                    <p class="text-xl font-semibold text-blue-500">{{ active_projects }}</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-sm font-medium text-gray-500">Completion Rate</p>
+                    <p class="text-xl font-semibold text-indigo-600">
+                        {% if projects.count > 0 %}
+                            {{ completed_projects|floatformat:0 }}%
+                        {% else %}
+                            0%
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tasks Summary -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <h2 class="text-lg font-medium text-gray-900 mb-4">Tasks Summary</h2>
+            <canvas id="tasksChart" class="w-full h-48"></canvas>
+            <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Total Tasks</p>
+                    <p class="text-xl font-semibold text-indigo-600">{{ task_status.active|add:task_status.in_progress|add:task_status.complete }}</p>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Active</p>
+                    <p class="text-xl font-semibold text-blue-500">{{ task_status.active }}</p>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-500">In Progress</p>
+                    <p class="text-xl font-semibold text-yellow-500">{{ task_status.in_progress }}</p>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Completed</p>
+                    <p class="text-xl font-semibold text-green-500">{{ task_status.complete }}</p>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Completion Rate</p>
+                    <p class="text-xl font-semibold text-indigo-600">
+                        {% if task_status.active or task_status.in_progress or task_status.complete %}
+                            {{ task_status.complete|floatformat:0 }}%
+                        {% else %}
+                            0%
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tasks by Category -->
+    <div class="bg-white shadow rounded-lg overflow-hidden mb-8">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-medium text-gray-900">Tasks by Category</h2>
+        </div>
+        <div class="p-6">
+            <canvas id="categoryChart" class="w-full h-64"></canvas>
+        </div>
+    </div>
+
+    <!-- Recent Projects -->
+    <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-medium text-gray-900">Recent Projects</h2>
+        </div>
+        <div class="p-6">
+            {% if projects %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-300">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Project</th>
+                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Tasks</th>
+                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Progress</th>
+                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
+                            <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                                <span class="sr-only">View</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 bg-white">
+                        {% for project in projects|slice:":5" %}
+                        <tr>
+                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">{{ project.name }}</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ project.tasks.count }}</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                    <div class="bg-indigo-600 h-2.5 rounded-full" style="width: {{ project.completion_percentage }}%"></div>
+                                </div>
+                                <span class="text-xs">{{ project.completion_percentage }}% complete</span>
+                            </td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                    {% if project.is_completed %}bg-green-100 text-green-800
+                                    {% else %}bg-blue-100 text-blue-800{% endif %}">
+                                    {% if project.is_completed %}Completed{% else %}Active{% endif %}
+                                </span>
+                            </td>
+                            <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                                <a href="{% url 'project_detail' project.pk %}" class="text-indigo-600 hover:text-indigo-900">View</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-8">
+                <p class="text-gray-500">You don't have any projects yet.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    // Projects Chart
+    const projectsCtx = document.getElementById('projectsChart').getContext('2d');
+    const projectsChart = new Chart(projectsCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Completed', 'Active'],
+            datasets: [{
+                data: [{{ completed_projects }}, {{ active_projects }}],
+                backgroundColor: [
+                    '#22c55e', // green-500
+                    '#3b82f6'  // blue-500
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            cutout: '70%',
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // Tasks Chart
+    const tasksCtx = document.getElementById('tasksChart').getContext('2d');
+    const tasksChart = new Chart(tasksCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Active', 'In Progress', 'Complete'],
+            datasets: [{
+                data: [{{ task_status.active }}, {{ task_status.in_progress }}, {{ task_status.complete }}],
+                backgroundColor: [
+                    '#3b82f6', // blue-500
+                    '#eab308', // yellow-500
+                    '#22c55e'  // green-500
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            cutout: '70%',
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // Category Chart
+    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+    const categoryChart = new Chart(categoryCtx, {
+        type: 'bar',
+        data: {
+            labels: [
+                {% for category in task_categories %}
+                    '{{ category.category|title }}',
+                {% endfor %}
+            ],
+            datasets: [{
+                label: 'Tasks by Category',
+                data: [
+                    {% for category in task_categories %}
+                        {{ category.count }},
+                    {% endfor %}
+                ],
+                backgroundColor: [
+                    '#8b5cf6', // purple-500
+                    '#ec4899', // pink-500
+                    '#10b981', // green-500
+                    '#3b82f6', // blue-500
+                    '#6b7280'  // gray-500
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

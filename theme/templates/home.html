@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load static socialaccount %}
+
+{% block auth_content %}
+<!-- Main container with fixed background image styling -->
+<div class="min-h-screen relative flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <!-- Background image with proper styling to ensure it fills the screen -->
+    <div class="absolute inset-0 z-0">
+        <img src="{% static 'images/bg.jpg' %}" alt="Background" class="w-full h-full object-cover">
+    </div>
+    
+    <!-- Content overlay -->
+    <div class="relative z-10 sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="bg-white/80 backdrop-blur-sm rounded-lg shadow-2xl p-8">
+            <img class="mx-auto h-20 w-auto" src="{% static 'images/logo.svg' %}" alt="SynTask">
+            <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                Smart Task & Project Management
+            </h2>
+            <p class="mt-3 text-center text-md text-gray-600">
+                Organize your work and boost productivity with our intelligent task management system
+            </p>
+        
+            <div class="mt-8 space-y-6">
+                <div>
+                    <a href="{% url 'login' %}" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200">
+                        <span class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                            </svg>
+                            Sign in to your account
+                        </span>
+                    </a>
+                </div>
+                <div>
+                    <a href="{% url 'signup' %}" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200">
+                        <span class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                            </svg>
+                            Create new account
+                        </span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="mt-8">
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">
+                            Or continue with
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <a href="{% provider_login_url 'google' %}" class="w-full inline-flex justify-center py-3 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all duration-200">
+                        <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
+                            <path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"/>
+                        </svg>
+                        Continue with Google
+                    </a>
+                </div>
+            </div>
+            
+            <div class="mt-8 text-center text-sm text-gray-500">
+                <p>By signing up, you agree to our <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Terms</a> and <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Privacy Policy</a></p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="relative z-10 mt-8 text-center">
+        <p class="text-sm text-black drop-shadow-md">© 2025 SynTask. All rights reserved.</p>
+    </div>
+</div>
+{% endblock %}

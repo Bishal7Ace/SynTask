@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Overall Task Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+        .header img {
+            height: 50px;
+        }
+        .header h1 {
+            margin: 10px 0 5px;
+            color: #111;
+        }
+        .header p {
+            margin: 0;
+            color: #666;
+        }
+        .summary {
+            margin-bottom: 30px;
+        }
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .summary-card {
+            border: 1px solid #eee;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .summary-card h2 {
+            margin-top: 0;
+            font-size: 16px;
+            color: #111;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-item h3 {
+            margin: 0 0 5px;
+            font-size: 14px;
+            color: #666;
+        }
+        .stat-item p {
+            margin: 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .chart-placeholder {
+            height: 200px;
+            background-color: #f9fafb;
+            border: 1px dashed #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+            color: #999;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background-color: #f9fafb;
+            font-weight: bold;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-active {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+        .status-complete {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        .progress-bar {
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: #4f46e5;
+            border-radius: 5px;
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="file://{{ STATIC_ROOT }}/images/logo.png" alt="SynTask">
+        <h1>Overall Task Report</h1>
+        <p>Generated on {{ date }}</p>
+    </div>
+
+    <div class="summary">
+        <div class="summary-grid">
+            <div class="summary-card">
+                <h2>Projects Summary</h2>
+                <div class="chart-placeholder">
+                    Projects Chart ({{ completed_projects }} Completed, {{ active_projects }} Active)
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <h3>Total Projects</h3>
+                        <p>{{ projects.count }}</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>Completed Projects</h3>
+                        <p>{{ completed_projects }}</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>Active Projects</h3>
+                        <p>{{ active_projects }}</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>Completion Rate</h3>
+                        <p>
+                            {% if projects.count > 0 %}
+                                {{ completed_projects|floatformat:0 }}%
+                            {% else %}
+                                0%
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="summary-card">
+                <h2>Tasks Summary</h2>
+                <div class="chart-placeholder">
+                    Tasks Chart ({{ task_status.active }} Active, {{ task_status.in_progress }} In Progress, {{ task_status.complete }} Complete)
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <h3>Total Tasks</h3>
+                        <p>{{ task_status.active|add:task_status.in_progress|add:task_status.complete }}</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>Active</h3>
+                        <p>{{ task_status.active }}</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>In Progress</h3>
+                        <p>{{ task_status.in_progress }}</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>Completed</h3>
+                        <p>{{ task_status.complete }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="category">
+        <h2>Tasks by Category</h2>
+        <div class="chart-placeholder">
+            Category Chart (
+                {% for category in task_categories %}
+                    {{ category.count }} {{ category.category }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            )
+        </div>
+    </div>
+
+    <div class="recent-projects">
+        <h2>Recent Projects</h2>
+        {% if projects %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Project</th>
+                    <th>Tasks</th>
+                    <th>Progress</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for project in projects|slice:":5" %}
+                <tr>
+                    <td>{{ project.name }}</td>
+                    <td>{{ project.tasks.count }}</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ project.completion_percentage }}%"></div>
+                        </div>
+                        <span>{{ project.completion_percentage }}% complete</span>
+                    </td>
+                    <td>
+                        <span class="status-badge {% if project.is_completed %}status-complete{% else %}status-active{% endif %}">
+                            {% if project.is_completed %}Completed{% else %}Active{% endif %}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>You don't have any projects yet.</p>
+        {% endif %}
+    </div>
+
+    <div class="footer">
+        <p>Report generated by SynTask • {{ date }}</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,63 @@
+{% load static %}
+<!-- Sidebar -->
+<div id="sidebar" class="fixed left-0 w-64 bg-white border-r border-gray-200 z-20 transform transition-transform duration-200 ease-in-out lg:translate-x-0 -translate-x-full">
+    <div class="flex flex-col h-full">
+        <div class="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
+            <div class="flex-1 px-3 space-y-1">
+                <!-- Dashboard -->
+                <a href="{% url 'dashboard' %}" class="group flex items-center px-2 py-2 text-sm font-medium rounded-md {% if request.resolver_match.url_name == 'dashboard' %}bg-indigo-50 text-indigo-600{% else %}text-gray-600 hover:text-gray-900 hover:bg-gray-50{% endif %}">
+                    <i class="fas fa-tachometer-alt mr-3 text-gray-400 group-hover:text-gray-500"></i>
+                    Dashboard
+                </a>
+                
+                <!-- Projects -->
+                <a href="{% url 'project_list' %}" class="group flex items-center px-2 py-2 text-sm font-medium rounded-md {% if 'project' in request.resolver_match.url_name %}bg-indigo-50 text-indigo-600{% else %}text-gray-600 hover:text-gray-900 hover:bg-gray-50{% endif %}">
+                    <i class="fas fa-project-diagram mr-3 text-gray-400 group-hover:text-gray-500"></i>
+                    Projects
+                </a>
+                
+                <!-- Tasks -->
+                <a href="{% url 'task_list' %}" class="group flex items-center px-2 py-2 text-sm font-medium rounded-md {% if 'task' in request.resolver_match.url_name %}bg-indigo-50 text-indigo-600{% else %}text-gray-600 hover:text-gray-900 hover:bg-gray-50{% endif %}">
+                    <i class="fas fa-tasks mr-3 text-gray-400 group-hover:text-gray-500"></i>
+                    Tasks
+                </a>
+                
+                <!-- Reports -->
+                <a href="{% url 'overall_report' %}" class="group flex items-center px-2 py-2 text-sm font-medium rounded-md {% if 'report' in request.resolver_match.url_name %}bg-indigo-50 text-indigo-600{% else %}text-gray-600 hover:text-gray-900 hover:bg-gray-50{% endif %}">
+                    <i class="fas fa-chart-bar mr-3 text-gray-400 group-hover:text-gray-500"></i>
+                    Reports
+                </a>
+            </div>
+        </div>
+        
+        <!-- Profile section -->
+        <div class="flex-shrink-0 flex border-t border-gray-200 p-4">
+            <div class="flex items-center">
+                {% if user.profile.avatar %}
+                    <img class="h-10 w-10 rounded-full" src="{{ user.profile.avatar.url }}" alt="Profile avatar">
+                {% else %}
+                    <div class="h-10 w-10 rounded-full bg-indigo-500 flex items-center justify-center text-white font-semibold">
+                        {% if user.first_name and user.last_name %}
+                            {{ user.first_name|first }}{{ user.last_name|first }}
+                        {% else %}
+                            {{ user.username|first|upper }}
+                        {% endif %}
+                    </div>
+                {% endif %}
+                <div class="ml-3">
+                    <p class="text-sm font-medium text-gray-700">
+                        {% if user.get_full_name %}
+                            {{ user.get_full_name }}
+                        {% else %}
+                            {{ user.username }}
+                        {% endif %}
+                    </p>
+                    <a href="{% url 'profile_settings' %}" class="text-xs font-medium text-indigo-600 hover:text-indigo-500">View profile</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Overlay (for mobile) -->
+<div id="sidebar-overlay" class="fixed inset-0 bg-black opacity-50 z-10 hidden"></div>

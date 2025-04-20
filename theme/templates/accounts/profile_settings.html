@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load static crispy_forms_tags %}
+
+{% block title %}Profile Settings{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="mb-8">
+        <h1 class="text-2xl font-bold text-gray-900">Profile Settings</h1>
+        <p class="mt-1 text-sm text-gray-500">Manage your personal information and account settings.</p>
+    </div>
+
+    <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-medium text-gray-900">Personal Information</h2>
+            <p class="mt-1 text-sm text-gray-500">Update your basic information and profile photo.</p>
+        </div>
+        
+        <div class="p-6">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="space-y-6">
+                    <div class="flex items-center space-x-6">
+                        <div class="shrink-0">
+                            {% if user.profile.avatar %}
+                                <img class="h-16 w-16 object-cover rounded-full" src="{{ user.profile.avatar.url }}" alt="Current profile photo">
+                            {% else %}
+                                <div class="h-16 w-16 rounded-full bg-indigo-500 flex items-center justify-center text-white font-semibold text-xl">
+                                    {{ user.first_name|first }}{{ user.last_name|first }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <label class="block">
+                                <span class="sr-only">Choose profile photo</span>
+                                <input type="file" name="avatar" class="block w-full text-sm text-gray-500
+                                    file:mr-4 file:py-2 file:px-4
+                                    file:rounded-md file:border-0
+                                    file:text-sm file:font-semibold
+                                    file:bg-indigo-50 file:text-indigo-700
+                                    hover:file:bg-indigo-100">
+                            </label>
+                        </div>
+                    </div>
+                    
+                    {{ profile_form|crispy }}
+                    
+                    <div class="pt-5">
+                        <div class="flex justify-end">
+                            <button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
