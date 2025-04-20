@@ -43,17 +43,18 @@
 
 ---
 
-
 ## 📸 Screenshots
 
 ### 🔹 Dashboard
-[dashboard](https://github.com/user-attachments/assets/1a02424d-c9dc-413c-a7ec-2cacba1e2cbe)
+![Dashboard]![dashboard](https://github.com/user-attachments/assets/209d4ff6-1acd-430f-81cd-45809708f5a7)
 
 
 ### 🔹 Tasks
-[tasks](https://github.com/user-attachments/assets/988267de-436f-47f5-a0b5-dcdc34b78763)
+![Tasks]![tasks](https://github.com/user-attachments/assets/f1a3370c-bd3c-436d-84fb-4c99ad4d1fa0)
 
 
 ### 🔹 Reports
-[reports](https://github.com/user-attachments/assets/ae7eaf8e-ece9-47ce-b176-cf5e145be775)
+![Reports]![reports](https://github.com/user-attachments/assets/c035868a-f604-4a33-aa77-66ee68d54d39)
+
+
 
