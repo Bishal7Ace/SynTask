@@ -43,8 +43,8 @@
 
 ---
 
-[![Watch the video]
-(https://youtu.be/g-Qi0ZY4p4Q)
+[![Watch the video](https://img.youtube.com/vi/your_video_id/0.jpg)](https://youtu.be/g-Qi0ZY4p4Q)
+
 
 ---
 
